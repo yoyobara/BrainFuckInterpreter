@@ -24,11 +24,23 @@ public class Engine {
     public static void solve(String script, BufferedInputStream in, OutputStream out){
         // script
         char[] scriptArr = script.toCharArray();
+
+        if (!checkScript(scriptArr)){
+            System.err.println("the script is not interpretable.");
+            System.exit(5);
+        }
+
         Integer scriptPtr = 0;
 
         // cells
         int[] cells = new int[N_CELLS];
         Integer cellPtr = 0;
+
+        // brackets counter
+        int loopCounter = 0;
+
+        
+
     }
 
     /**
@@ -138,5 +150,32 @@ public class Engine {
         public NoInputException(String errorMessage) {
             super(errorMessage);
         }
+    }
+
+    /**
+     * check if the script is interpretable
+     * by making sure every '[' has a matching ']'.
+     * 
+     * @param script the script charArray.
+     * @return whether the script is interpretable or not.
+     */
+    public static boolean checkScript(char[] script){
+        int ptr = 0;
+        int loopCounter = 0;
+
+        while (ptr < script.length){
+            switch (script[ptr]){
+                case OPEN_LOOP:
+                    loopCounter++;
+                    break;
+
+                case CLOSE_LOOP:
+                    loopCounter--;
+                    break;
+            }
+            ptr++;
+        }
+
+        return loopCounter == 0;
     }
 }
