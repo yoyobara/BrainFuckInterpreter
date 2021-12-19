@@ -34,7 +34,7 @@ public class Engine {
      * 
      * @param cellPtr the pointer itself
      */
-    public static void nextCell(Integer cellPtr){
+    private static void nextCell(Integer cellPtr){
         if (cellPtr == N_CELLS)
             cellPtr = 0;
         else
@@ -46,10 +46,30 @@ public class Engine {
      * 
      * @param cellPtr the pointer itself
      */
-    public static void previousCell(Integer cellPtr){
+    private static void previousCell(Integer cellPtr){
         if (cellPtr == 0)
             cellPtr = N_CELLS;
         else
             cellPtr--;
+    }
+
+    /**
+     * increases the value of the current pointed cell by one.
+     * 
+     * @param cellPtr the cells pointer
+     * @param cells the cells array
+     */
+    private static void increase(Integer cellPtr, int[] cells){
+        cells[cellPtr]++;
+    }
+
+    /**
+     * decreases the value of the current pointed cell by one.
+     * 
+     * @param cellPtr the cells pointer
+     * @param cells the cells array
+     */
+    private static void decrease(Integer cellPtr, int[] cells){
+        cells[cellPtr]--;
     }
 }
