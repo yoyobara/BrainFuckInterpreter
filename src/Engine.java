@@ -1,3 +1,5 @@
+import java.io.BufferedInputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 
 /**
@@ -5,6 +7,7 @@ import java.io.OutputStream;
  * can be used by many tools involving brainfuck.
  */
 public class Engine {
+
     // available commands
     public static final char INCREASE = '+';
     public static final char DECREASE = '-';
@@ -18,7 +21,17 @@ public class Engine {
     // number of cells available
     public static final int N_CELLS = 20;
 
-    public static <InputStream> String solve(String script, InputStream in, OutputStream out){
+    /**
+     * Exception for the case when the program asks for input 
+     * and the input has reached its end.
+     */
+    public static class NoInputException extends RuntimeException{
+        public NoInputException(String errorMessage) {
+            super(errorMessage);
+        }
+    }
+
+    public static void solve(String script, BufferedInputStream in, OutputStream out){
         // script
         char[] scriptArr = script.toCharArray();
         Integer scriptPtr = 0;
@@ -26,7 +39,6 @@ public class Engine {
         // cells
         int[] cells = new int[N_CELLS];
         Integer cellPtr = 0;
-
     }
 
     /**
@@ -82,4 +94,18 @@ public class Engine {
     private static void decrease(Integer cellPtr, int[] cells){
         cells[cellPtr]--;
     }
+
+    private static void input(Integer cellPtr, int[] cells, BufferedInputStream in){
+        try {
+            int n = in.read();
+            if (n == -1) throw new NoInputException("no more input!");
+            
+            cells[cellPtr] = n;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(2);
+    }
+}
+
 }
