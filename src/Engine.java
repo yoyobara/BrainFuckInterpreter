@@ -1,7 +1,5 @@
 import java.io.OutputStream;
 
-import javax.swing.text.InternationalFormatter;
-
 /**
  * Engine - interprets the brainfuck itself.
  * can be used by many tools involving brainfuck.
@@ -31,6 +29,27 @@ public class Engine {
 
     }
 
+    /**
+     * moves the cell pointer one cell to the right
+     * 
+     * @param cellPtr the pointer itself
+     */
     public static void nextCell(Integer cellPtr){
+        if (cellPtr == N_CELLS)
+            cellPtr = 0;
+        else
+            cellPtr++;
+    }
+
+    /**
+     * moves the cell pointer one cell to the left
+     * 
+     * @param cellPtr the pointer itself
+     */
+    public static void previousCell(Integer cellPtr){
+        if (cellPtr == 0)
+            cellPtr = N_CELLS;
+        else
+            cellPtr--;
     }
 }
