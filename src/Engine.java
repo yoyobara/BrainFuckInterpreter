@@ -30,6 +30,16 @@ public class Engine {
     }
 
     /**
+     * returns the value of the current pointed cell.
+     * 
+     * @param cellPtr the cells pointer
+     * @param cells the cells array
+     */
+    private static int getCurrent(Integer cellPtr, int[] cells){
+        return cells[cellPtr];
+    }
+
+    /**
      * moves the cell pointer one cell to the right
      * 
      * @param cellPtr the pointer itself
