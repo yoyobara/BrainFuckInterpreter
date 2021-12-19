@@ -21,16 +21,6 @@ public class Engine {
     // number of cells available
     public static final int N_CELLS = 20;
 
-    /**
-     * Exception for the case when the program asks for input 
-     * and the input has reached its end.
-     */
-    public static class NoInputException extends RuntimeException{
-        public NoInputException(String errorMessage) {
-            super(errorMessage);
-        }
-    }
-
     public static void solve(String script, BufferedInputStream in, OutputStream out){
         // script
         char[] scriptArr = script.toCharArray();
@@ -95,7 +85,20 @@ public class Engine {
         cells[cellPtr]--;
     }
 
-    private static void input(Integer cellPtr, int[] cells, BufferedInputStream in){
+    /**
+     * gets the next character from the input buffer, puts it's numeric value
+     * in the current pointed cell.
+     * 
+     * might throw a NoInputException in case when the input buffer has reached its end
+     * and the program tries to read more input.
+     * 
+     * in case of an IOException it will be printed and exit with code 2.
+     * 
+     * @param cellPtr the cells pointer
+     * @param cells the cells array
+     * @param in the input stream to take the input from
+     */
+    private static void getchar(Integer cellPtr, int[] cells, BufferedInputStream in){
         try {
             int n = in.read();
             if (n == -1) throw new NoInputException("no more input!");
@@ -105,7 +108,35 @@ public class Engine {
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(2);
+        }
     }
-}
 
+    /**
+     * gets the next character from the input buffer, puts it's numeric value
+     * in the current pointed cell.
+     * 
+     * in case of an IOException it will be printed and exit with code 2.
+     * 
+     * @param cellPtr the cells pointer
+     * @param cells the cells array
+     * @param out the output stream used for the output
+     */
+    private static void putchar(Integer cellPtr, int[] cells, OutputStream out){
+        try {
+            out.write(getCurrent(cellPtr, cells));
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(2);
+        }
+    }
+
+    /**
+     * Exception for the case when the program asks for input 
+     * and the input has reached its end.
+     */
+    public static class NoInputException extends RuntimeException{
+        public NoInputException(String errorMessage) {
+            super(errorMessage);
+        }
+    }
 }
