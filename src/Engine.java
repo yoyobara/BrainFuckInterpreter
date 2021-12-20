@@ -34,10 +34,41 @@ public class Engine {
         int[] cells = new int[N_CELLS];
         Integer cellPtr = 0;
 
-        // brackets counter
-        int loopCounter = 0;
+        while(scriptPtr != script.length){
+            switch (getCurrentCmd(scriptPtr, script)) {
+                case INCREASE:
+                    increase(cellPtr, cells);
+                    break;
+                
+                case DECREASE:
+                    decrease(cellPtr, cells);
+                    break;
+                
+                case NEXT:
+                    nextCell(cellPtr);
+                    break;
 
-        
+                case PREVIOUS:
+                    previousCell(cellPtr);
+                    break;
+
+                case OPEN_LOOP:
+                    startloop(cellPtr, cells, scriptPtr, script);
+                    break;
+                
+                case CLOSE_LOOP:
+                    endloop(cellPtr, cells, scriptPtr, script);
+                    break;
+
+                case PRINT:
+                    putchar(cellPtr, cells, out);
+                
+                case GET:
+                    getchar(cellPtr, cells, in);
+            }
+            
+            scriptPtr++;
+        }
     }
 
     /**
