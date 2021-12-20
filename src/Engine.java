@@ -104,13 +104,104 @@ public class Engine {
         cells[cellPtr]--;
     }
 
+    /**
+     * call when at a starting of a loop.
+     * make sure you call it exactly when the script pointer is on the '['.
+     * 
+     * if the current cell is zero, it will skip to after the corresponding end of the loop
+     * elsewhere it will enter the loop.
+     * 
+     * @param cellPtr the cells pointer
+     * @param cells the cells array
+     * @param scriptPtr the script pointer
+     * @param script the script
+     */
     private static void startloop(Integer cellPtr, int[] cells, Integer scriptPtr, char[] script){
+        // if the current cell is 0, jump to the command after the corresponding close.
         if (getCurrentCell(cellPtr, cells) == 0){
-            // jump to closing 
-            int counter = 0;
-            while (getCurrentCmd(scriptPtr, script)){}
-        }  
+            findLoopBound(cellPtr, cells, scriptPtr, script);
+            return;
+        }
+
+        // elsewhere enter the loop
+        scriptPtr++;
     }
+
+    /**
+     * call when at an ending of a loop.
+     * make sure you call it exactly when the script pointer is on the ']'.
+     * 
+     * if the current cell is zero, it will exit the loop and continue to the command after it
+     * elsewhere it will return to the first command inside its loop.
+     * 
+     * @param cellPtr the cells pointer
+     * @param cells the cells array
+     * @param scriptPtr the script pointer
+     * @param script the script
+     */
+    private static void endloop(Integer cellPtr, int[] cells, Integer scriptPtr, char[] script){
+        // if the current cell is 0, exit the loop and go to next command.
+        if (getCurrentCell(cellPtr, cells) == 0){
+            scriptPtr++;
+            return;
+        }
+
+        // elsewhere come back to the first command in the loop
+        findLoopBound(cellPtr, cells, scriptPtr, script);
+        scriptPtr++;        
+    }
+
+    /**
+     * finds the other bound of a loop.
+     * call when the script pointer is on the '[' or a ']' of a loop.
+     * 
+     * the method will finish when the script pointer is on the corresponding bound character.
+     * 
+     * @param cellPtr the cells pointer
+     * @param cells the cells array
+     * @param scriptPtr the script pointer
+     * @param script the script
+     */
+    private static void findLoopBound(Integer cellPtr, int[] cells, Integer scriptPtr, char[] script){
+        int direction;
+        char finish;
+        char begin;
+
+        // determine whether to search for a startloop or an endloop.
+        switch (getCurrentCmd(scriptPtr, script){
+            case OPEN_LOOP:
+                direction = 1;
+                begin = OPEN_LOOP;
+                finish = CLOSE_LOOP;
+                break;
+        
+            case CLOSE_LOOP:
+                direction = -1;
+                begin = CLOSE_LOOP;
+                finish = OPEN_LOOP;
+        }
+
+        int counter = 0;
+        boolean reached = false;
+        
+        // search
+        while (!reached){
+            scriptPtr += direction;
+            switch (getCurrentCmd(scriptPtr, script)) {
+                case begin:
+                    counter++;
+                    break;
+                case finish:
+                    if (counter == 0) {
+                        reached = true;
+                    } else {
+                        counter--;
+                    }
+            }
+        }
+    }
+
+    
 
     /**
      * gets the next character from the input buffer, puts it's numeric value
