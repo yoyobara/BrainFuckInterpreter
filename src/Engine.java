@@ -108,7 +108,7 @@ public class Engine {
         if (getCurrentCell(cellPtr, cells) == 0){
             // jump to closing 
             int counter = 0;
-            while (getCurrentCmd(scriptPtr, script) == '[')
+            while (getCurrentCmd(scriptPtr, script)){}
         }  
     }
 
