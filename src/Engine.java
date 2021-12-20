@@ -21,6 +21,10 @@ public class Engine {
     // number of cells available
     public static final int N_CELLS = 20;
 
+    public static void solve(String script, BufferedInputStream in, OutputStream out){
+        solve(script.toCharArray(), in, out);
+    }
+
     public static void solve(char[] script, BufferedInputStream in, OutputStream out){
         // check script's interpretability
         if (!checkScript(script)){
