@@ -21,11 +21,9 @@ public class Engine {
     // number of cells available
     public static final int N_CELLS = 20;
 
-    public static void solve(String script, BufferedInputStream in, OutputStream out){
-        // script
-        char[] scriptArr = script.toCharArray();
-
-        if (!checkScript(scriptArr)){
+    public static void solve(char[] script, BufferedInputStream in, OutputStream out){
+        // check script's interpretability
+        if (!checkScript(script)){
             System.err.println("the script is not interpretable.");
             System.exit(5);
         }
@@ -40,7 +38,6 @@ public class Engine {
         int loopCounter = 0;
 
         
-
     }
 
     /**
@@ -49,8 +46,18 @@ public class Engine {
      * @param cellPtr the cells pointer
      * @param cells the cells array
      */
-    private static int getCurrent(Integer cellPtr, int[] cells){
+    private static int getCurrentCell(Integer cellPtr, int[] cells){
         return cells[cellPtr];
+    }
+
+    /**
+     * returns the current command to run.
+     * 
+     * @param scriptPtr the script pointer
+     * @param script the script
+     */
+    private static int getCurrentCmd(Integer scriptPtr, char[] script){
+        return script[scriptPtr];
     }
 
     /**
@@ -97,6 +104,14 @@ public class Engine {
         cells[cellPtr]--;
     }
 
+    private static void startloop(Integer cellPtr, int[] cells, Integer scriptPtr, char[] script){
+        if (getCurrentCell(cellPtr, cells) == 0){
+            // jump to closing 
+            int counter = 0;
+            while (getCurrentCmd(scriptPtr, script) == '[')
+        }  
+    }
+
     /**
      * gets the next character from the input buffer, puts it's numeric value
      * in the current pointed cell.
@@ -135,7 +150,7 @@ public class Engine {
      */
     private static void putchar(Integer cellPtr, int[] cells, OutputStream out){
         try {
-            out.write(getCurrent(cellPtr, cells));
+            out.write(getCurrentCell(cellPtr, cells));
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(2);
