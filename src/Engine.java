@@ -288,26 +288,6 @@ public class Engine {
     }
 
     /**
-     * Exception for the case when the program asks for input 
-     * and the input has reached its end.
-     */
-    public static class NoInputException extends RuntimeException{
-        public NoInputException(String errorMessage) {
-            super(errorMessage);
-        }
-    }
-
-    /**
-     * exception for the case when trying to find the other bound of a loop
-     * and the pointer is not on the other bound.
-     */
-    public static class NotOnALoopException extends RuntimeException{
-        public NotOnALoopException(String errorMessage) {
-            super(errorMessage);
-        }
-    }
-
-    /**
      * check if the script is interpretable
      * by making sure every '[' has a matching ']'.
      * 
