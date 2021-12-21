@@ -1,7 +1,4 @@
-import java.io.BufferedInputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.IOException;
+import java.io.*;
 
 public class Engine1 {
 
@@ -31,7 +28,7 @@ public class Engine1 {
     private int cellPtr;
 
     // the OutputStream to output to.
-    private OutputStream output;
+    private PrintStream output;
 
     // the inputStream to get the input from.
     // buffered inputstream is used so we can read from it one character at a time.
@@ -44,7 +41,7 @@ public class Engine1 {
      * @param in the input stream to take input from
      * @param out the output stream for the program's output. 
      */
-    private Engine1(char[] script, InputStream in, OutputStream out){
+    private Engine1(char[] script, InputStream in, PrintStream out){
         this.output = out;
         this.input = new BufferedInputStream(in);
 
@@ -63,12 +60,12 @@ public class Engine1 {
      * @param in the input stream to take input from
      * @param out the output stream for the program's output. 
      */
-    private Engine1(String script, InputStream in, OutputStream out){
+    public Engine1(String script, InputStream in, PrintStream out){
         this(script.toCharArray(), in, out);
     }
 
     /**
-     * solves the script given in the constructor.
+     * interprets the script given in the constructor.
      * 
      * output goes to the given outputStream.
      * input comes from the given InputStream. 
@@ -78,7 +75,7 @@ public class Engine1 {
      * @throws NoInputException no more input, and the program's trying to get more.
      * @throws IOException problems with input and output
      */
-    public void solve() throws IOException, NoInputException{
+    public void interpret() throws IOException, NoInputException{
         // check script's interpretability
         if (!checkScript()){
             System.err.println("the script is not interpretable.");
@@ -86,6 +83,7 @@ public class Engine1 {
         }
 
         while(scriptPtr != script.length){
+            System.out.println(cells[0] + " " + cells[1]);
             switch (getCurrentCmd()) {
                 case INCREASE:
                     increase();
@@ -166,7 +164,7 @@ public class Engine1 {
      * moves the cell pointer one cell to the right
      */
     private void nextCell(){
-        if (cellPtr == N_CELLS)
+        if (cellPtr == N_CELLS - 1)
             cellPtr = 0;
         else
             cellPtr++;
@@ -177,7 +175,7 @@ public class Engine1 {
      */
     private void previousCell(){
         if (cellPtr == 0)
-            cellPtr = N_CELLS;
+            cellPtr = N_CELLS - 1;
         else
             cellPtr--;
     }
@@ -207,11 +205,8 @@ public class Engine1 {
         // if the current cell is 0, jump to the command after the corresponding close.
         if (getCurrentCell() == 0){
             findLoopBound();
-            return;
         }
-
         // elsewhere enter the loop
-        scriptPtr++;
     }
 
     /**
@@ -224,13 +219,11 @@ public class Engine1 {
     private void endloop() {
         // if the current cell is 0, exit the loop and go to next command.
         if (getCurrentCell() == 0){
-            scriptPtr++;
             return;
         }
 
         // elsewhere come back to the first command in the loop
         findLoopBound();
-        scriptPtr++;
     }
 
     /**
@@ -256,6 +249,7 @@ public class Engine1 {
                 direction = -1;
                 begin = CLOSE_LOOP;
                 finish = OPEN_LOOP;
+                break;
             
             default:
                 throw new RuntimeException("called findLoopBound when not on the bound of a loop.");
@@ -273,6 +267,7 @@ public class Engine1 {
                     counter++;
                     break;
                 }
+
                 else if (currentCmd == finish){
                     if (counter == 0) {
                         reached = true;
@@ -313,12 +308,7 @@ public class Engine1 {
      * @throws IOException problems with input and output
      */
     private void putchar() throws IOException{
-        try {
-            output.write(getCurrentCell());
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.exit(2);
-        }
+        output.println((char) getCurrentCell());
     }
 
     /**
@@ -327,16 +317,6 @@ public class Engine1 {
      */
     public static class NoInputException extends Exception{
         public NoInputException(String errorMessage) {
-            super(errorMessage);
-        }
-    }
-
-    /**
-     * exception for the case when trying to find the other bound of a loop
-     * and the pointer is not on the other bound.
-     */
-    public static class NotOnALoopException extends Exception{
-        public NotOnALoopException(String errorMessage) {
             super(errorMessage);
         }
     }

@@ -1,8 +1,8 @@
-import java.io.BufferedInputStream;
+import java.io.IOException;
 
 public class Test {
-    public static void main(String[] args) {
-        // System.out.println("hell");
-        // Engine.solve("+++++ +++++ [>+++++ +++++ < -]", (BufferedInputStream)System.in, System.out);
+    public static void main(String[] args) throws IOException, Engine1.NoInputException {
+        Engine1 en = new Engine1("+++++ +++++ [>+++++ +++++ < -]>.", System.in, System.out);
+        en.interpret();
     }
 }
