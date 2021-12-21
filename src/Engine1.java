@@ -67,7 +67,62 @@ public class Engine1 {
         this(script.toCharArray(), in, out);
     }
 
-        /**
+    /**
+     * solves the script given in the constructor.
+     * 
+     * output goes to the given outputStream.
+     * input comes from the given InputStream. 
+     * 
+     * in case the script is not interpretable, exits with code 5.
+     * 
+     * @throws NoInputException no more input, and the program's trying to get more.
+     * @throws IOException problems with input and output
+     */
+    public void solve() throws IOException, NoInputException{
+        // check script's interpretability
+        if (!checkScript()){
+            System.err.println("the script is not interpretable.");
+            System.exit(5);
+        }
+
+        while(scriptPtr != script.length){
+            switch (getCurrentCmd()) {
+                case INCREASE:
+                    increase();
+                    break;
+                
+                case DECREASE:
+                    decrease();
+                    break;
+                
+                case NEXT:
+                    nextCell();
+                    break;
+
+                case PREVIOUS:
+                    previousCell();
+                    break;
+
+                case OPEN_LOOP:
+                    startloop();
+                    break;
+                
+                case CLOSE_LOOP:
+                    endloop();
+                    break;
+
+                case PRINT:
+                    putchar();
+                
+                case GET:
+                    getchar();
+            }
+            
+            scriptPtr++;
+        }
+    }
+
+    /**
      * check if the script is interpretable
      * by making sure every '[' has a matching ']'.
      * 
@@ -166,7 +221,7 @@ public class Engine1 {
      * if the current cell is zero, it will exit the loop and continue to the command after it
      * elsewhere it will return to the first command inside its loop.
      */
-    private void endloop(){
+    private void endloop() {
         // if the current cell is 0, exit the loop and go to next command.
         if (getCurrentCell() == 0){
             scriptPtr++;
@@ -175,7 +230,7 @@ public class Engine1 {
 
         // elsewhere come back to the first command in the loop
         findLoopBound();
-        scriptPtr++;        
+        scriptPtr++;
     }
 
     /**
@@ -201,8 +256,9 @@ public class Engine1 {
                 direction = -1;
                 begin = CLOSE_LOOP;
                 finish = OPEN_LOOP;
+            
             default:
-                throw new NotOnALoopException("not on a loop bound. make sure you call this method when you are on a loop bound.");
+                throw new RuntimeException("called findLoopBound when not on the bound of a loop.");
         }
 
         int counter = 0;
@@ -234,9 +290,10 @@ public class Engine1 {
      * might throw a NoInputException in case when the input buffer has reached its end
      * and the program tries to read more input.
      * 
-     * in case of an IOException it will be printed and exit with code 2.
+     * @throws IOException problems with input and output
+     * @throws NoInputException no more input, and the program's trying to get more.
      */
-    private void getchar(){
+    private void getchar() throws NoInputException, IOException{
         try {
             int n = input.read();
             if (n == -1) throw new NoInputException("no more input!");
@@ -253,9 +310,9 @@ public class Engine1 {
      * gets the next character from the input buffer, puts it's numeric value
      * in the current pointed cell.
      * 
-     * in case of an IOException it will be printed and exit with code 2.
+     * @throws IOException problems with input and output
      */
-    private void putchar(){
+    private void putchar() throws IOException{
         try {
             output.write(getCurrentCell());
         } catch (IOException e) {
@@ -268,7 +325,7 @@ public class Engine1 {
      * Exception for the case when the program asks for input 
      * and the input has reached its end.
      */
-    public static class NoInputException extends RuntimeException{
+    public static class NoInputException extends Exception{
         public NoInputException(String errorMessage) {
             super(errorMessage);
         }
@@ -278,7 +335,7 @@ public class Engine1 {
      * exception for the case when trying to find the other bound of a loop
      * and the pointer is not on the other bound.
      */
-    public static class NotOnALoopException extends RuntimeException{
+    public static class NotOnALoopException extends Exception{
         public NotOnALoopException(String errorMessage) {
             super(errorMessage);
         }
