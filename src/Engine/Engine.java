@@ -1,6 +1,8 @@
+package Engine;
+
 import java.io.*;
 
-public class Engine1 {
+public abstract class Engine {
 
     // available commands
     public static final char INCREASE = '+';
@@ -16,23 +18,16 @@ public class Engine1 {
     public static final int N_CELLS = 20;
 
     // the script characters array.
-    private char[] script;
+    protected char[] script;
 
     // the script array pointer
-    private int scriptPtr;
+    protected int scriptPtr;
 
     // the cells array
-    private int[] cells;
+    protected int[] cells;
     
     // the cells pointer
-    private int cellPtr;
-
-    // the OutputStream to output to.
-    private PrintStream output;
-
-    // the inputStream to get the input from.
-    // buffered inputstream is used so we can read from it one character at a time.
-    private BufferedInputStream input;
+    protected int cellPtr;
 
     /**
      * constructs the interpreter engine object.
@@ -41,10 +36,7 @@ public class Engine1 {
      * @param in the input stream to take input from
      * @param out the print stream for the program's output. 
      */
-    public Engine1(String script, InputStream in, PrintStream out){
-        this.output = out;
-        this.input = new BufferedInputStream(in);
-
+    protected Engine(String script){
         this.cells = new int[N_CELLS];
         this.cellPtr = 0;
 
@@ -63,7 +55,7 @@ public class Engine1 {
      * @throws NoInputException no more input, and the program's trying to get more.
      * @throws IOException problems with input and output
      */
-    public void interpret() throws IOException, NoInputException{
+    protected void _interpret() throws IOException, NoInputException{
         // check script's interpretability
         if (!checkScript()){
             System.err.println("the script is not interpretable.");
@@ -137,21 +129,21 @@ public class Engine1 {
     /**
      * @return the value of the current pointed cell.
      */
-    private int getCurrentCell(){
+    protected int getCurrentCell(){
         return cells[cellPtr];
     }
 
     /**
      * @return the current command to run.
      */
-    private char getCurrentCmd(){
+    protected char getCurrentCmd(){
         return script[scriptPtr];
     }
 
     /**
      * moves the cell pointer one cell to the right
      */
-    private void nextCell(){
+    protected void nextCell(){
         if (cellPtr == N_CELLS - 1)
             cellPtr = 0;
         else
@@ -161,7 +153,7 @@ public class Engine1 {
     /**
      * moves the cell pointer one cell to the left
      */
-    private void previousCell(){
+    protected void previousCell(){
         if (cellPtr == 0)
             cellPtr = N_CELLS - 1;
         else
@@ -171,14 +163,14 @@ public class Engine1 {
     /**
      * increases the value of the current pointed cell by one.
      */
-    private void increase(){
+    protected void increase(){
         cells[cellPtr]++;
     }
 
     /**
      * decreases the value of the current pointed cell by one.
      */
-    private void decrease(){
+    protected void decrease(){
         cells[cellPtr]--;
     }
 
@@ -189,7 +181,7 @@ public class Engine1 {
      * if the current cell is zero, it will skip to after the corresponding end of the loop
      * elsewhere it will enter the loop.
      */
-    private void startloop(){
+    protected void startloop(){
         // if the current cell is 0, jump to the command after the corresponding close.
         if (getCurrentCell() == 0){
             findLoopBound();
@@ -204,7 +196,7 @@ public class Engine1 {
      * if the current cell is zero, it will exit the loop and continue to the command after it
      * elsewhere it will return to the first command inside its loop.
      */
-    private void endloop() {
+    protected void endloop() {
         // if the current cell is 0, exit the loop and go to next command.
         if (getCurrentCell() == 0){
             return;
@@ -220,7 +212,7 @@ public class Engine1 {
      * 
      * the method will finish when the script pointer is on the corresponding bound
      */
-    private void findLoopBound(){
+    protected void findLoopBound(){
         int direction;
         char finish;
         char begin;
@@ -276,28 +268,13 @@ public class Engine1 {
      * @throws IOException problems with input and output
      * @throws NoInputException no more input, and the program's trying to get more.
      */
-    private void getchar() throws NoInputException, IOException{
-        try {
-            int n = input.read();
-            if (n == -1) throw new NoInputException("no more input!");
-            
-            cells[cellPtr] = n;
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.exit(2);
-        }
-    }
+    protected abstract void getchar() throws NoInputException, IOException;
 
     /**
      * gets the next character from the input buffer, puts it's numeric value
      * in the current pointed cell.
-     * 
-     * @throws IOException problems with input and output
      */
-    private void putchar() throws IOException{
-        output.println((char) getCurrentCell());
-    }
+    protected abstract void putchar() throws IOException;
 
     /**
      * Exception for the case when the program asks for input 
