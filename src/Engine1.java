@@ -39,29 +39,17 @@ public class Engine1 {
      * 
      * @param script the script to be run
      * @param in the input stream to take input from
-     * @param out the output stream for the program's output. 
+     * @param out the print stream for the program's output. 
      */
-    private Engine1(char[] script, InputStream in, PrintStream out){
+    public Engine1(String script, InputStream in, PrintStream out){
         this.output = out;
         this.input = new BufferedInputStream(in);
 
         this.cells = new int[N_CELLS];
         this.cellPtr = 0;
 
-        this.script = script;
+        this.script = script.toCharArray();
         this.scriptPtr = 0;
-    }
-
-    /**
-     * constructs the interpreter engine object.
-     * (using String script)
-     * 
-     * @param script the script to be run
-     * @param in the input stream to take input from
-     * @param out the output stream for the program's output. 
-     */
-    public Engine1(String script, InputStream in, PrintStream out){
-        this(script.toCharArray(), in, out);
     }
 
     /**
